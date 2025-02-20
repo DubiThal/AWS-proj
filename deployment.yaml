@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: weather-app
-        image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/weather-app:latest
+        image: yourdockerhubusername/weather-app:latest
         ports:
         - containerPort: 5000
         env:
