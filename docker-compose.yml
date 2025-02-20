@@ -1,0 +1,14 @@
+services:
+  jenkins:
+    image: jenkins:lts
+    container_name: jenkins
+    restart: always
+    network_mode: "host"
+    ports:
+      - "23230:23230"
+      - "23443:23443"
+    environment:
+      - JENKINS_OPTS=--httpPort=8080
+      - JENKINS_SLAVE_AGENT_PORT=50000
+dubi@server001:/Project/Dubi$
+
