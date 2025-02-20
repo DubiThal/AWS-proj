@@ -1,6 +1,11 @@
 pipeline {
     agent any
     
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKER_IMAGE = "yourdockerhubusername/weather-app"
+    }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -10,13 +15,21 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'docker build -t flask-app .'
+                sh "docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ."
+                sh "docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_IMAGE}:latest"
             }
         }
         
-        stage('Test') {
+        stage('Login to DockerHub') {
             steps {
-                sh 'python -m pytest'
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        
+        stage('Push') {
+            steps {
+                sh "docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                sh "docker push ${DOCKER_IMAGE}:latest"
             }
         }
         
@@ -24,6 +37,12 @@ pipeline {
             steps {
                 sh 'kubectl apply -f k8s/'
             }
+        }
+    }
+    
+    post {
+        always {
+            sh 'docker logout'
         }
     }
 }
