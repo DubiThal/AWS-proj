@@ -15,8 +15,6 @@ COPY server.key /etc/nginx/ssl/
 RUN mkdir -p /etc/nginx/conf.d
 COPY nginx.conf /etc/nginx/conf.d/jenkins.conf
 
-EXPOSE 23230 23443
-
 RUN echo '#!/bin/bash\n\
 service nginx start\n\
 exec /usr/local/bin/jenkins.sh' > /usr/local/bin/start.sh && \
