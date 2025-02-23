@@ -7,7 +7,7 @@ import logging
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
-WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', 'your-api-key')
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', '7b9eb86d39944aaf0492b821b84ba023')
 WEATHER_API_URL = "https://api.openweathermap.org/data/2.5"
 
 @app.route('/')
