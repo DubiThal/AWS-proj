@@ -76,8 +76,8 @@ resource "aws_security_group" "ec2_sg" {
   }
 }
 
-resource "aws_instance" "jenkins" {
-  ami                         = "ami-0c2b8ca1dad447f8a" # Amazon Linux 2
+resource "aws_instance" "devops-app-server" {
+  ami                         = "ami-0c2b8ca1dad447f8a"
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.public.id
   key_name                    = "new-aws-key"
@@ -85,7 +85,7 @@ resource "aws_instance" "jenkins" {
   associate_public_ip_address = true
 
   tags = {
-    Name = "jenkins-ec2"
+    Name = "devops-app-server"
   }
 
   provisioner "remote-exec" {
@@ -107,6 +107,6 @@ resource "aws_instance" "jenkins" {
 }
 
 output "public_ip" {
-  value = aws_instance.jenkins.public_ip
+  value = aws_instance.devops-app-server.public_ip
 }
 
