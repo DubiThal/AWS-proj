@@ -33,11 +33,11 @@ pipeline {
             }
         }
         
-        stage('Deploy to K8s') {
-            steps {
-                sh 'kubectl apply -f k8s/'
-            }
-        }
+//        stage('Deploy to K8s') {
+//            steps {
+//                sh 'kubectl apply -f k8s/'
+//            }
+//        }
     }
     
     post {
