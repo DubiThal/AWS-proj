@@ -1,35 +1,19 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f0f2f5;
+.forecast-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    margin-top: 15px;
 }
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.search-box {
-    margin: 20px 0;
-}
-
-input {
-    padding: 10px;
-    width: 200px;
+.forecast-item {
+    min-width: 120px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    padding: 10px;
+    background-color: #f9f9f9;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.forecast-date {
+    font-weight: bold;
+    margin-bottom: 5px;
 }
