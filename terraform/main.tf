@@ -2,77 +2,42 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# VPC
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
-
-  tags = {
-    Name = "main"
-  }
 }
 
-# שני Subnets באזורים שונים
-resource "aws_subnet" "public_a" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "us-east-1a"
-
-  tags = {
-    Name = "public-a"
-  }
+resource "aws_subnet" "public" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "us-east-1a"
 }
 
-resource "aws_subnet" "public_b" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.2.0/24"
-  availability_zone = "us-east-1b"
-
-  tags = {
-    Name = "public-b"
-  }
-}
-
-# אינטרנט גטווי
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
-
-  tags = {
-    Name = "main-igw"
-  }
 }
 
-# טבלת ניתוב
-resource "aws_route_table" "public_rt" {
+resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
   }
-
-  tags = {
-    Name = "public-rt"
-  }
 }
 
-# שיוך של ה־Subnets לטבלת הניתוב
-resource "aws_route_table_association" "public_assoc_a" {
-  subnet_id      = aws_subnet.public_a.id
-  route_table_id = aws_route_table.public_rt.id
+resource "aws_route_table_association" "public" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
 }
 
-resource "aws_route_table_association" "public_assoc_b" {
-  subnet_id      = aws_subnet.public_b.id
-  route_table_id = aws_route_table.public_rt.id
-}
-
-# Security Group
-resource "aws_security_group" "jenkins_sg" {
+resource "aws_security_group" "ec2_sg" {
   name        = "jenkins-sg"
-  description = "Allow SSH, HTTP, HTTPS, Jenkins UI"
+  description = "Allow SSH, HTTP, and Docker/Jenkins ports"
   vpc_id      = aws_vpc.main.id
 
   ingress {
+    description = "SSH"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -80,13 +45,7 @@ resource "aws_security_group" "jenkins_sg" {
   }
 
   ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
+    description = "HTTP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -94,8 +53,17 @@ resource "aws_security_group" "jenkins_sg" {
   }
 
   ingress {
-    from_port   = 443
-    to_port     = 443
+    description = "Jenkins UI"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Jenkins Agent"
+    from_port   = 50000
+    to_port     = 50000
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -106,63 +74,39 @@ resource "aws_security_group" "jenkins_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = {
-    Name = "jenkins-sg"
-  }
 }
 
-# EC2 למכונת Jenkins
 resource "aws_instance" "jenkins" {
-  ami                         = "ami-072e42fd77921edac"
+  ami                         = "ami-0c2b8ca1dad447f8a" # Amazon Linux 2
   instance_type               = "t2.micro"
-  subnet_id                   = aws_subnet.public_a.id
+  subnet_id                   = aws_subnet.public.id
   key_name                    = "new-aws-key"
+  vpc_security_group_ids      = [aws_security_group.ec2_sg.id]
   associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.jenkins_sg.id]
 
   tags = {
-    Name = "Jenkins"
+    Name = "jenkins-ec2"
   }
-}
 
-# IAM Role ל-EKS
-resource "aws_iam_role" "eks_role" {
-  name = "eks-cluster-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Action = "sts:AssumeRole",
-      Effect = "Allow",
-      Principal = {
-        Service = "eks.amazonaws.com"
-      }
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_policy" {
-  role       = aws_iam_role.eks_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-}
-
-# EKS Cluster
-resource "aws_eks_cluster" "main" {
-  name     = "demo-eks-cluster"
-  role_arn = aws_iam_role.eks_role.arn
-
-  vpc_config {
-    subnet_ids = [
-      aws_subnet.public_a.id,
-      aws_subnet.public_b.id
+  provisioner "remote-exec" {
+    inline = [
+      "sudo yum update -y",
+      "sudo yum install docker -y",
+      "sudo systemctl start docker",
+      "sudo systemctl enable docker",
+      "sudo usermod -aG docker ec2-user"
     ]
-  }
 
-  depends_on = [aws_iam_role_policy_attachment.eks_policy]
-
-  tags = {
-    Name = "EKS Cluster"
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = file("~/.ssh/new-aws-key")
+      host        = self.public_ip
+    }
   }
+}
+
+output "public_ip" {
+  value = aws_instance.jenkins.public_ip
 }
 
