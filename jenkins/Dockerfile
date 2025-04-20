@@ -8,7 +8,7 @@ RUN apt-get update && \
     docker.io \
     curl \
     sudo \
-    openjdk-11-jdk && \
+    openjdk-17-jdk && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
