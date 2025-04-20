@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
-        DOCKER_IMAGE = "yourdockerhubusername/weather-app"
+        DOCKER_IMAGE = "dubithal/weather-app"
     }
     
     stages {
