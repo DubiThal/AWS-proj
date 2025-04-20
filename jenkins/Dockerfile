@@ -21,6 +21,10 @@ RUN jenkins-plugin-cli --plugins \
     workflow-aggregator \
     blueocean \
     configuration-as-code
+    github-branch-source \
+    git-client \
+    git-server \
+    multibranch-scan-webhook-trigger \
 
 RUN usermod -aG docker jenkins
 
