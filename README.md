@@ -35,37 +35,6 @@ The project contains two Docker Compose setups:
 Jenkins is configured via Docker Compose and listens on port 8080.
 NGINX serves as a secure reverse proxy for the Flask app (port 443).
 
-## 📂 Project Structure
-.  
-├── app/  
-│   ├── app.py  
-│   ├── docker-compose.yml  
-│   ├── Dockerfile  
-│   ├── nginx.conf  
-│   ├── requirements.txt  
-│   ├── static/  
-│   │   ├── css/  
-│   │   │   └── style.css  
-│   │   └── js/  
-│   │       └── main.js  
-│   └── templates/  
-│       └── index.html  
-├── ec2setup.sh  
-├── jenkins/  
-│   ├── Dockerfile  
-│   └── docker-compose.yml  
-├── Jenkinsfile  
-├── terraform/  
-│   ├── main.tf  
-│   ├── terraform.tfstate  
-│   └── terraform.tfstate.backup  
-├── k8s/  
-│   ├── deployment.yaml  
-│   ├── hpa.yaml  
-│   ├── secret.yaml  
-│   └── service.yaml  
-└── README.md  
-
 ## 🔁 CI/CD Pipeline (Jenkins)
 The Jenkins pipeline (defined in `Jenkinsfile`) performs the following:
 - Clones the GitHub repository
