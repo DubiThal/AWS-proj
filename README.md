@@ -2,6 +2,7 @@
 
 ## 🎯 Overview
 This is a Flask-based weather forecast web application deployed in a Docker container on an AWS EC2 instance. The project uses Jenkins for CI/CD and Terraform for infrastructure management. GitHub and DockerHub are integrated for version control and image storage.
+**Weather data is retrieved via the [OpenWeatherMap API](https://openweathermap.org/api).**
 
 ## 🧱 Infrastructure Setup
 - **Cloud Provider**: AWS (Free Tier)
@@ -33,19 +34,25 @@ The project contains two Docker Compose setups:
 - **jenkins/** – Contains the Jenkins server, fully Dockerized with customized Dockerfile and plugins.
 
 Jenkins is configured via Docker Compose and listens on port 8080.
-NGINX serves as a secure reverse proxy for the Flask app (port 443).
+NGINX serves as a secure reverse proxy for the Flask app (port 443) and handles HTTPS via Let's Encrypt certificates.
 
 ## 🔁 CI/CD Pipeline (Jenkins)
 The Jenkins pipeline (defined in `Jenkinsfile`) performs the following:
 - Clones the GitHub repository
 - Builds the Docker image for the Flask app
 - Pushes the image to DockerHub
-- *(Future)* Deploys to Kubernetes (currently disabled)
+- *(Upcoming)* Deploys to Kubernetes using manifests stored in `k8s/`
 
-## 🧪 Future Enhancements
-- ✅ Add HTTPS via Let's Encrypt and NGINX *(in progress)*
-- ✅ Split NGINX and Jenkins into separate docker-compose files *(done)*
+## 🚀 Additional Features Implemented
+- ✅ HTTPS support via Let's Encrypt and NGINX
+- ✅ Reverse proxy for Flask via NGINX (port 443)
+- ✅ Split docker-compose files for Jenkins and Flask/NGINX
+- ✅ EC2 infrastructure provisioned with Terraform
+- ✅ CI/CD pipeline running inside Dockerized Jenkins
+- ✅ Environment variables and `.env` support in Flask app
+- ✅ K8s manifests prepared for deployment (Minikube testing in progress)
+
 - 🔜 Run automated tests (e.g., Pytest)
 - 🔜 Integrate Prometheus & Grafana for monitoring
-- 🔜 Use a lightweight K8s solution like K3s
+- 🔜 Use a lightweight K8s solution 
 - 🔜 Store configuration/secrets with AWS SSM or Secrets Manager
