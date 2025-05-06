@@ -7,7 +7,9 @@ import logging
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
-WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', '7b9eb86d39944aaf0492b821b84ba023')
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
+if not WEATHER_API_KEY:
+    raise RuntimeError("Missing WEATHER_API_KEY environment variable!")
 WEATHER_API_URL = "https://api.openweathermap.org/data/2.5"
 
 @app.route('/')
@@ -16,7 +18,10 @@ def home():
 
 @app.route('/weather')
 def get_weather():
-    city = request.args.get('city', 'London')
+    city = request.args.get('city')
+    if not city:
+        return jsonify({'error': 'Missing city parameter'}), 400
+
     try:
         # Get current weather
         current_weather = requests.get(
@@ -28,7 +33,10 @@ def get_weather():
             },
             timeout=5
         ).json()
-        
+
+    if current_weather.get('cod') != 200:
+        return jsonify({'error': current_weather.get('message', 'Invalid city')}), 400
+       
         # Get 5-day forecast
         forecast = requests.get(
             f"{WEATHER_API_URL}/forecast",
@@ -54,7 +62,7 @@ def health_check():
     try:
         # Test API connectivity
         requests.get(f"{WEATHER_API_URL}/weather", 
-                    params={'q': 'London', 'appid': WEATHER_API_KEY},
+                    params={'q': 'Haifa', 'appid': WEATHER_API_KEY},
                     timeout=5)
         return jsonify({'status': 'healthy', 'timestamp': datetime.now().isoformat()}), 200
     except Exception as e:
