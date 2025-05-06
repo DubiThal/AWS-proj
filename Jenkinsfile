@@ -40,7 +40,7 @@ pipeline {
                 sshagent(['ec2-ssh-credentials']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ec2-user@3.95.31.133 '
-                            cd /path/to/app &&
+                            cd /home/ec2-user/dubi-proj/app &&
                             docker-compose down &&
                             docker pull dubithal/weather-app:latest &&
                             docker-compose up -d
