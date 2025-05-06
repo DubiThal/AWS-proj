@@ -34,8 +34,8 @@ def get_weather():
             timeout=5
         ).json()
 
-    if current_weather.get('cod') != 200:
-        return jsonify({'error': current_weather.get('message', 'Invalid city')}), 400
+        if current_weather.get('cod') != 200:
+            return jsonify({'error': current_weather.get('message', 'Invalid city')}), 400
        
         # Get 5-day forecast
         forecast = requests.get(
