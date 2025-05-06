@@ -34,12 +34,21 @@ pipeline {
                 sh "docker push ${DOCKER_IMAGE}:latest"
             }
         }
-        
-//        stage('Deploy to K8s') {
-//            steps {
-//                sh 'kubectl apply -f k8s/'
-//            }
-//        }
+
+        stage('Deploy to EC2') {
+            steps {
+                sshagent(['ec2-ssh-credentials']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ec2-user@<EC2_IP> '
+                            cd /path/to/app &&
+                            docker-compose down &&
+                            docker pull dubithal/weather-app:latest &&
+                            docker-compose up -d
+                        '
+                    '''
+                }
+            }
+        }
     }
     
     post {
