@@ -2,6 +2,8 @@ FROM jenkins/jenkins:lts
 
 USER root
 
+ARG DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && \
     apt-get install -y \
     git \
@@ -40,8 +42,6 @@ RUN jenkins-plugin-cli --plugins \
     git-client \
     git-server \
     multibranch-scan-webhook-trigger
-
-RUN usermod -aG docker jenkins
 
 USER jenkins
 
