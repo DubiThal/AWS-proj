@@ -6,7 +6,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y \
-    docker.io
     git \
     curl \
     sudo \
@@ -43,6 +42,8 @@ RUN jenkins-plugin-cli --plugins \
     git-client \
     git-server \
     multibranch-scan-webhook-trigger
+
+RUN usermod -aG docker jenkins
 
 USER jenkins
 
