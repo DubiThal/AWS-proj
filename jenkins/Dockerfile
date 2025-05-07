@@ -6,6 +6,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y \
+    docker.io
     git \
     curl \
     sudo \
@@ -48,4 +49,4 @@ USER jenkins
 ENV JENKINS_OPTS="--httpPort=8080"
 ENV JENKINS_SLAVE_AGENT_PORT=50000
 
-ENTRYPOINT ["/usr/local/bin/jenkins.sh"]
+CMD ["/usr/local/bin/jenkins.sh"]
