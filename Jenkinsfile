@@ -5,7 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKER_IMAGE = "dubithal/weather-app"
         AWS_CREDENTIALS = credentials('aws-credentials')
-        EC2_INSTANCE_TAG_KEY = "devopsproj"
+        EC2_INSTANCE_TAG_KEY = "Name"
         EC2_INSTANCE_TAG_VALUE = "weather-app-server"
         AWS_REGION = "us-east-1"
     }
@@ -41,11 +41,8 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
-        withCredentials([
-            string(credentialsId: 'aws-credentials', variable: 'AWS_ACCESS_KEY_ID'),
-            string(credentialsId: 'aws-credentials', variable: 'AWS_SECRET_ACCESS_KEY')
-        ]) {
-            sh '''
+             withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+             sh '''
                 export AWS_DEFAULT_REGION=${AWS_REGION}
                 
                 # Find instance by tag
