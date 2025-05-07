@@ -48,4 +48,4 @@ USER jenkins
 ENV JENKINS_OPTS="--httpPort=8080"
 ENV JENKINS_SLAVE_AGENT_PORT=50000
 
-CMD ["/usr/local/bin/jenkins.sh"]
+ENTRYPOINT ["/usr/local/bin/jenkins.sh"]
