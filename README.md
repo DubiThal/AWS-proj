@@ -50,9 +50,6 @@ The Jenkins pipeline (defined in `Jenkinsfile`) performs the following:
 - ✅ EC2 infrastructure provisioned with Terraform
 - ✅ CI/CD pipeline running inside Dockerized Jenkins
 - ✅ Environment variables and `.env` support in Flask app
-- ✅ K8s manifests prepared for deployment (Minikube testing in progress)
-
+- ✅ Secrets stored with AWS SSM
 - 🔜 Run automated tests (e.g., Pytest)
 - 🔜 Integrate Prometheus & Grafana for monitoring
-- 🔜 Use a lightweight K8s solution 
-- 🔜 Store configuration/secrets with AWS SSM or Secrets Manager
