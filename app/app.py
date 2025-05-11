@@ -3,9 +3,12 @@ import requests
 import os
 from datetime import datetime
 import logging
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
+
+metrics = PrometheusMetrics(app)
 
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 if not WEATHER_API_KEY:

@@ -39,6 +39,13 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                sh 'pip install -r requirements.txt'
+                sh 'pytest tests/'
+            }
+        }
+
         stage('Deploy to EC2') {
             steps {
              withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
