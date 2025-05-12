@@ -2,13 +2,15 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('DOCKERHUB_CREDENTIALS_ID')
-        DOCKERHUB_USERNAME = 'dubithal'
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         FLASK_IMAGE = 'dubithal/weather-app:latest'
         NGINX_IMAGE = 'dubithal/nginx:latest'
-        EC2_SSH_KEY = credentials('EC2_SSH_PRIVATE_KEY')
+        AWS_CREDENTIALS = credentials('aws-credentials')
+        EC2_INSTANCE_TAG_KEY = "Name"
+        EC2_INSTANCE_TAG_VALUE = "weather-app-server"
+        AWS_REGION = "us-east-1"
         EC2_USER = 'ec2-user'
-        EC2_HOST = 'www.dubiapp.duckdns.org'
+        EC2_HOST = 'www.dubiapp.duckdns.org' 
     }
 
     stages {
@@ -35,7 +37,7 @@ pipeline {
                 dir('app') {
                     sh '''
                         docker build -t $FLASK_IMAGE -f Dockerfile .
-                        echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_USERNAME --password-stdin
+                        echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
                         docker push $FLASK_IMAGE
                     '''
                 }
@@ -56,17 +58,29 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
-                sshagent(credentials: ['EC2_SSH_PRIVATE_KEY']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-credentials'
+                ]]) {
+                    script {
+                        def deployCommand = """
                             cd ~/dubi-proj &&
-                            git pull origin main && 
+                            git pull origin main &&
                             cd app &&
-                            docker pull $FLASK_IMAGE &&
-                            docker pull $NGINX_IMAGE &&
+                            docker pull dubithal/weather-app:latest &&
+                            docker pull dubithal/nginx:latest &&
                             docker compose down &&
                             docker compose up -d
-                        '
+                        """
+
+                        sh """
+                            aws ssm send-command \
+                                --region $AWS_REGION \
+                                --document-name "AWS-RunShellScript" \
+                                --comment "Deploy weather app" \
+                                --targets Key=tag:$EC2_INSTANCE_TAG_KEY,Values=$EC2_INSTANCE_TAG_VALUE \
+                                --parameters commands=["${deployCommand.replace('\n', ' ')}"] \
+                                --output text
                     """
                 }
             }
