@@ -58,9 +58,9 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws-credentials'
+                withCredentials([[ 
+                    $class: 'AmazonWebServicesCredentialsBinding', 
+                    credentialsId: 'aws-credentials' 
                 ]]) {
                     script {
                         def deployCommand = """
@@ -81,11 +81,11 @@ pipeline {
                                 --targets Key=tag:$EC2_INSTANCE_TAG_KEY,Values=$EC2_INSTANCE_TAG_VALUE \
                                 --parameters commands=["${deployCommand.replace('\n', ' ')}"] \
                                 --output text
-                    """
+                        """ 
+                    }
                 }
             }
         }
-    }
 
     post {
         always {
