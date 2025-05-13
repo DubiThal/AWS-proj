@@ -16,6 +16,7 @@ RUN apt-get update && \
     groff \
     less \
     unzip && \
+    pip3 install pytest && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

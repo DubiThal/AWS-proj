@@ -17,11 +17,7 @@ pipeline {
         stage('Test Flask') {
             steps {
                 dir('app') {
-                    sh '''
-                        sudo apt-get update
-                        sudo apt-get install -y python3-pytest
-                        python3 -m pytest tests
-                    '''
+                    sh 'python3 -m pytest tests'
                 }
             }
         }
