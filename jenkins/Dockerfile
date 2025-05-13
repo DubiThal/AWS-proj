@@ -20,7 +20,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY requirements.test.txt /tmp/requirements.test.txt
+COPY ../app/requirements.txt /tmp/requirements.test.txt
 RUN pip install --break-system-packages -r /tmp/requirements.test.txt
 
 
