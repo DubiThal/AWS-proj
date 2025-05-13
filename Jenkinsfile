@@ -49,7 +49,7 @@ pipeline {
                 dir('app') {
                     sh '''
                         docker build -t $NGINX_IMAGE -f Dockerfile.nginx .
-                        echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_USERNAME --password-stdin
+                        echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
                         docker push $NGINX_IMAGE
                     '''
                 }
@@ -74,19 +74,19 @@ pipeline {
                         """
 
                         sh """
-                            aws ssm send-command \
-                                --region $AWS_REGION \
-                                --document-name "AWS-RunShellScript" \
-                                --comment "Deploy weather app" \
-                                --targets Key=tag:$EC2_INSTANCE_TAG_KEY,Values=$EC2_INSTANCE_TAG_VALUE \
-                                --parameters commands=["${deployCommand.replace('\n', ' ')}"] \
+                            aws ssm send-command \\
+                                --region $AWS_REGION \\
+                                --document-name "AWS-RunShellScript" \\
+                                --comment "Deploy weather app" \\
+                                --targets Key=tag:$EC2_INSTANCE_TAG_KEY,Values=$EC2_INSTANCE_TAG_VALUE \\
+                                --parameters commands=["${deployCommand.replace('\n', ' ')}"] \\
                                 --output text
                         """ 
                     }
                 }
             }
         }
-
+    }
     post {
         always {
             sh 'docker logout'
