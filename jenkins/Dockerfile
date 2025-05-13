@@ -20,6 +20,10 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+COPY app/requirements.test.txt /tmp/requirements.test.txt
+RUN pip install --break-system-packages -r /tmp/requirements.test.txt
+
+
 # התקנת AWS CLI v2
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
