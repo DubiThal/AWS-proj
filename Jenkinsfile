@@ -17,7 +17,10 @@ pipeline {
         stage('Test Flask') {
             steps {
                 dir('app') {
-                    sh 'python3 -m unittest discover -s tests'
+                    sh '''
+                        pip install pytest
+                        python3 -m pytest tests
+                    '''
                 }
             }
         }
