@@ -29,7 +29,7 @@ pipeline {
             steps {
                 dir('app') {
                     sh '''
-                        docker run --rm -v "$PWD/nginx.conf":/etc/nginx/nginx.conf nginx:latest nginx -t
+                        docker run --rm -v "/home/ec2-user/dubi-proj/app/nginx.conf":/etc/nginx/nginx.conf nginx:latest nginx -t
                     '''
                 }
             }
