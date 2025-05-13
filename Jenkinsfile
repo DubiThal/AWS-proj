@@ -17,7 +17,7 @@ pipeline {
         stage('Test Flask') {
             steps {
                 dir('app') {
-                    sh 'python3 -m pytest tests'
+                   sh 'PYTHONPATH=$(pwd) python3 -m pytest tests'
                 }
             }
         }
