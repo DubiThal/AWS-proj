@@ -17,7 +17,10 @@ pipeline {
         stage('Test Flask') {
             steps {
                 dir('app') {
-                   sh 'PYTHONPATH=$(pwd) python3 -m pytest tests'
+                   sh '''
+                       export WEATHER_API_KEY=$(aws ssm get-parameter --name "weather_api_key" --with-decryption --region us-east-1 --query "Parameter.Value" --output text)
+                       PYTHONPATH=$(pwd) python3 -m pytest tests
+                   '''
                 }
             }
         }
