@@ -18,7 +18,6 @@ services:
 
 networks:
   app-network:
-    external: true 
 
 volumes:
   jenkins_home:
