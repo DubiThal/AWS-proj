@@ -18,8 +18,8 @@ pipeline {
             steps {
                 dir('app') {
                     sh '''
-                        apt-get update
-                        apt-get install -y python3-pytest
+                        sudo apt-get update
+                        sudo apt-get install -y python3-pytest
                         python3 -m pytest tests
                     '''
                 }
