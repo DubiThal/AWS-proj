@@ -10,7 +10,7 @@ RUN apt-get update && \
     git \
     curl \
     sudo \
-    openjdk-17-jdk \
+    openjdk-17-jre-headless \
     python3 \
     python3-pip \
     groff \
