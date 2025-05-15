@@ -29,10 +29,7 @@ pipeline {
             steps {
                 dir('app') {
                     sh '''
-                        docker compose up -d
-                        sleep 3
-                        docker exec nginx nginx -t
-                        docker compose down
+                        docker run --rm -v $(pwd)/nginx.conf:/etc/nginx/nginx.conf:ro nginx:latest -t
                     '''
                 }
             }
