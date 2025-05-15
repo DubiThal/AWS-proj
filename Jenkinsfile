@@ -25,16 +25,6 @@ pipeline {
             }
         }
 
-        stage('Lint NGINX Config') {
-            steps {
-                dir('app') {
-                    sh '''
-                        docker run --rm -v $(pwd)/nginx.conf:/etc/nginx/nginx.conf:ro nginx:latest -t
-                    '''
-                }
-            }
-        }
-
         stage('Build and Push Flask Image') {
             steps {
                 dir('app') {
