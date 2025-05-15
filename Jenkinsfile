@@ -25,18 +25,18 @@ pipeline {
             }
         }
 
-//        stage('Lint NGINX Config') {
-//            steps {
-//                dir('app') {
-//                    sh '''
-//                        docker-compose up -d
-//                        sleep 3
-//                        docker exec nginx nginx -t
-//                        docker-compose down
-//                    '''
-//                }
-//            }
-//        }
+        stage('Lint NGINX Config') {
+            steps {
+                dir('app') {
+                    sh '''
+                        docker compose up -d
+                        sleep 3
+                        docker exec nginx nginx -t
+                        docker compose down
+                    '''
+                }
+            }
+        }
 
         stage('Build and Push Flask Image') {
             steps {
