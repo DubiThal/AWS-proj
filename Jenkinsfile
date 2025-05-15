@@ -29,10 +29,10 @@ pipeline {
             steps {
                 dir('app') {
                     sh '''
-                        docker compose up -d
+                        docker-compose up -d
                         sleep 3
                         docker exec nginx nginx -t
-                        docker compose down
+                        docker-compose down
                     '''
                 }
             }
