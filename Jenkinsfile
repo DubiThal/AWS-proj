@@ -29,7 +29,10 @@ pipeline {
             steps {
                 dir('app') {
                     sh '''
-                        docker run --rm -v "/home/ec2-user/dubi-proj/app/nginx.conf":/etc/nginx/nginx.conf nginx:latest nginx -t
+                        docker compose up -d
+                        sleep 3
+                        docker exec nginx nginx -t
+                        docker compose down
                     '''
                 }
             }
