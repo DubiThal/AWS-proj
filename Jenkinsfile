@@ -57,7 +57,7 @@ pipeline {
                 ]]) {
                     script {
                         def deployCommand = """
-                            cd ~/dubi-proj &&
+                            cd dubi-proj &&
                             git pull origin main &&
                             cd app &&
                             docker pull dubithal/weather-app:latest &&
