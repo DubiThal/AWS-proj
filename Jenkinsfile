@@ -58,6 +58,7 @@ pipeline {
                     script {
                         def deployCommand = """
                             cd /home/ec2-user/dubi-proj &&
+                            export HOME=/home/ec2-user &&
                             git config --global --add safe.directory /home/ec2-user/dubi-proj &&
                             git pull origin main &&
                             cd app &&
