@@ -78,7 +78,7 @@ pipeline {
                             "cd app",
                             "docker pull dubithal/weather-app:latest",
                             "docker pull dubithal/nginx:latest",
-                            "echo WEATHER_API_KEY="\\\${WEATHER_API_KEY}" > .env",
+                            "echo WEATHER_API_KEY=${WEATHER_API_KEY} > .env",
                             "docker-compose down",
                             "docker-compose up -d"
                         ]
@@ -92,7 +92,7 @@ pipeline {
                                 --document-name "AWS-RunShellScript" \\
                                 --comment "Deploy weather app" \\
                                 --targets "Key=tag:$EC2_INSTANCE_TAG_KEY,Values=$EC2_INSTANCE_TAG_VALUE" \\
-                                --parameters '{"commands":["${formattedCommand}"]}' \\
+                                --parameters '${parametersJson}' \\
                                 --output text
                         """ 
                     }
@@ -109,4 +109,3 @@ pipeline {
         }
     }
 }
-
