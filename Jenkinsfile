@@ -10,17 +10,31 @@ pipeline {
         EC2_INSTANCE_TAG_VALUE = "weather-app-server"
         AWS_REGION = "us-east-1"
         EC2_USER = 'ec2-user'
-        EC2_HOST = 'www.dubiapp.duckdns.org' 
+        EC2_HOST = 'www.dubiapp.duckdns.org'
+        WEATHER_API_KEY = '' 
     }
 
     stages {
+        stage('Get Secrets from SSM') {
+          steps {
+            script {
+              def apiKey = sh(
+                script: "aws ssm get-parameter --name \"weather_api_key\" --with-decryption --region us-east-1 --query 'Parameter.Value' --output text",
+                returnStdout: true
+              ).trim()
+
+              env.WEATHER_API_KEY = apiKey
+            }
+          }
+        }
+
         stage('Test Flask') {
             steps {
                 dir('app') {
-                   sh '''
-                       export WEATHER_API_KEY=$(aws ssm get-parameter --name "weather_api_key" --with-decryption --region us-east-1 --query "Parameter.Value" --output text)
+                   sh """
+                       export WEATHER_API_KEY="${WEATHER_API_KEY}"
                        PYTHONPATH=$(pwd) python3 -m pytest tests
-                   '''
+                   """
                 }
             }
         }
@@ -64,6 +78,7 @@ pipeline {
                             cd app &&
                             docker pull dubithal/weather-app:latest &&
                             docker pull dubithal/nginx:latest &&
+                            echo "WEATHER_API_KEY=${WEATHER_API_KEY}" > .env &&
                             docker-compose down &&
                             docker-compose up -d
                         """
@@ -85,6 +100,9 @@ pipeline {
     post {
         always {
             sh 'docker logout'
+            script {
+                env.WEATHER_API_KEY = ''
+            }
         }
     }
 }
