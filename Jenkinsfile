@@ -83,13 +83,15 @@ pipeline {
                             docker-compose up -d
                         """
 
+                        def formattedCommand = deployCommand.replace('\n', ' ').trim()
+
                         sh """
                             aws ssm send-command \\
                                 --region $AWS_REGION \\
                                 --document-name "AWS-RunShellScript" \\
                                 --comment "Deploy weather app" \\
-                                --targets Key=tag:$EC2_INSTANCE_TAG_KEY,Values=$EC2_INSTANCE_TAG_VALUE \\
-                                --parameters commands=["${deployCommand.replace('\n', ' ')}"] \\
+                                --targets "Key=tag:$EC2_INSTANCE_TAG_KEY,Values=$EC2_INSTANCE_TAG_VALUE" \\
+                                --parameters '{"commands":["${formattedCommand}"]}' \\
                                 --output text
                         """ 
                     }
