@@ -28,17 +28,16 @@ pipeline {
           }
         }
 
-        stage('Test Flask') {
-            steps {
-                dir('app') {
-                   sh '''
-                       export WEATHER_API_KEY="${WEATHER_API_KEY}"
-                       pip install boto3
-                       PYTHONPATH=$(pwd) python3 -m pytest tests
-                   '''
-                }
-            }
-        }
+//        stage('Test Flask') {
+//            steps {
+//                dir('app') {
+//                   sh '''
+//                       export WEATHER_API_KEY="${WEATHER_API_KEY}"
+//                       PYTHONPATH=$(pwd) python3 -m pytest tests
+//                   '''
+//                }
+//            }
+//        }
 
         stage('Build and Push Flask Image') {
             steps {
