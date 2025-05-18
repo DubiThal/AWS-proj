@@ -70,20 +70,21 @@ pipeline {
                     credentialsId: 'aws-credentials' 
                 ]]) {
                     script {
-                        def deployCommand = """
-                            export HOME=/home/ec2-user &&
-                            cd /home/ec2-user/dubi-proj &&
-                            git remote set-url origin https://github.com/dubithal/dubi-proj.git &&
-                            git pull origin main &&
-                            cd app &&
-                            docker pull dubithal/weather-app:latest &&
-                            docker pull dubithal/nginx:latest &&
-                            echo WEATHER_API_KEY="\\\${WEATHER_API_KEY}" > .env &&
-                            docker-compose down &&
-                            docker-compose up -d
-                        """
+                        def commands = [
+                            "export HOME=/home/ec2-user",
+                            "cd /home/ec2-user/dubi-proj",
+                            "git remote set-url origin https://github.com/dubithal/dubi-proj.git",
+                            "git pull origin main",
+                            "cd app",
+                            "docker pull dubithal/weather-app:latest",
+                            "docker pull dubithal/nginx:latest",
+                            "echo WEATHER_API_KEY="\\\${WEATHER_API_KEY}" > .env",
+                            "docker-compose down",
+                            "docker-compose up -d"
+                        ]
 
-                        def formattedCommand = deployCommand.replace('\n', ' ').trim()
+                        def commandsJson = groovy.json.JsonOutput.toJson(commands)
+                        def parametersJson = """{"commands": ${commandsJson}}"""
 
                         sh """
                             aws ssm send-command \\
