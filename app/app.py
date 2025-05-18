@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import requests
 import os
+import boto3
 from datetime import datetime
 import logging
 from prometheus_flask_exporter import PrometheusMetrics
@@ -10,9 +11,23 @@ logging.basicConfig(level=logging.INFO)
 
 metrics = PrometheusMetrics(app)
 
-WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
+def get_parameter_from_ssm(param_name, region='us-east-1'):
+    """Get a parameter from AWS SSM Parameter Store"""
+    try:
+        ssm = boto3.client('ssm', region_name=region)
+        response = ssm.get_parameter(Name=param_name, WithDecryption=True)
+        return response['Parameter']['Value']
+    except Exception as e:
+        logging.error(f"Failed to get {param_name} from SSM: {str(e)}")
+        return None
+
+WEATHER_API_KEY = get_parameter_from_ssm("weather_api_key")
 if not WEATHER_API_KEY:
-    raise RuntimeError("Missing WEATHER_API_KEY environment variable!")
+    WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
+
+if not WEATHER_API_KEY:
+    raise RuntimeError("Missing WEATHER_API_KEY from both SSM and environment variables!")
+
 WEATHER_API_URL = "https://api.openweathermap.org/data/2.5"
 
 @app.route('/')
