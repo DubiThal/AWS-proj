@@ -78,7 +78,7 @@ resource "aws_security_group" "ec2_sg" {
 
 resource "aws_instance" "devops-app-server" {
   ami                         = "ami-0c2b8ca1dad447f8a"
-  instance_type               = "t2.micro"
+  instance_type               = "t3.small"
   subnet_id                   = aws_subnet.public.id
   key_name                    = "new-aws-key"
   vpc_security_group_ids      = [aws_security_group.ec2_sg.id]
