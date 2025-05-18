@@ -57,9 +57,9 @@ pipeline {
                 ]]) {
                     script {
                         def deployCommand = """
-                            cd /home/ec2-user/dubi-proj &&
                             export HOME=/home/ec2-user &&
-                            git config --global --add safe.directory /home/ec2-user/dubi-proj &&
+                            cd /home/ec2-user/dubi-proj &&
+                            git remote set-url origin https://github.com/dubithal/dubi-proj.git &&
                             git pull origin main &&
                             cd app &&
                             docker pull dubithal/weather-app:latest &&
