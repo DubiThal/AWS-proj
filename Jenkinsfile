@@ -86,8 +86,12 @@ pipeline {
                             "docker-compose up -d"
                         ]
 
-                        def commandsJson = groovy.json.JsonOutput.toJson(commands)
-                        def parametersJson = """{"commands": ${commandsJson}}"""
+                        // Create the JSON manually by joining commands with escaped quotes
+                        def jsonCommands = commands.collect { cmd -> 
+                            return "\"${cmd.replace('"', '\\"')}\""
+                        }.join(", ")
+                        
+                        def parametersJson = "{\"commands\": [${jsonCommands}]}"
 
                         sh """
                             aws ssm send-command \\
