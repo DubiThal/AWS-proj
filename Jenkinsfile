@@ -70,6 +70,9 @@ pipeline {
                     credentialsId: 'aws-credentials' 
                 ]]) {
                     script {
+                        // Create a properly escaped command for the WEATHER_API_KEY
+                        def weatherApiKeyCommand = "echo WEATHER_API_KEY=${env.WEATHER_API_KEY} > .env"
+                        
                         def commands = [
                             "export HOME=/home/ec2-user",
                             "cd /home/ec2-user/dubi-proj",
@@ -78,7 +81,7 @@ pipeline {
                             "cd app",
                             "docker pull dubithal/weather-app:latest",
                             "docker pull dubithal/nginx:latest",
-                            "echo WEATHER_API_KEY=${WEATHER_API_KEY} > .env",
+                            weatherApiKeyCommand,
                             "docker-compose down",
                             "docker-compose up -d"
                         ]
