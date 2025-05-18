@@ -64,8 +64,8 @@ pipeline {
                             cd app &&
                             docker pull dubithal/weather-app:latest &&
                             docker pull dubithal/nginx:latest &&
-                            docker compose down &&
-                            docker compose up -d
+                            docker-compose down &&
+                            docker-compose up -d
                         """
 
                         sh """
