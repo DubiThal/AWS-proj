@@ -1,15 +1,21 @@
 from flask import Flask, render_template, request, jsonify
 import requests
+from flask import Response
 import os
 import boto3
 from datetime import datetime
 import logging
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 metrics = PrometheusMetrics(app)
+
+@app.route('/metrics')
+def custom_metrics():
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
 def get_parameter_from_ssm(param_name, region='us-east-1'):
     """Get a parameter from AWS SSM Parameter Store"""
