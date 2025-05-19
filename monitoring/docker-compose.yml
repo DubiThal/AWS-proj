@@ -7,7 +7,7 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - monitoring
+      - app-network
 
   grafana:
     image: grafana/grafana:latest
@@ -20,10 +20,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
-      - monitoring
-
-networks:
-  monitoring:
+      - app-network
 
 volumes:
   grafana-storage:
