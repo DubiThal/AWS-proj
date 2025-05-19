@@ -25,3 +25,6 @@ services:
 volumes:
   grafana-storage:
 
+networks:
+  app-network:
+    external: true
