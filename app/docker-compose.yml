@@ -11,7 +11,7 @@ services:
       - app-network
 
   nginx:
-    image: nginx:latest
+    image: dubithal/nginx:latest
     container_name: nginx
     ports:
       - "80:80"
