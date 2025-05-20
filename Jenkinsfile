@@ -70,7 +70,6 @@ pipeline {
                     credentialsId: 'aws-credentials' 
                 ]]) {
                     script {
-                        // Create a properly escaped command for the WEATHER_API_KEY
                         def weatherApiKeyCommand = "echo WEATHER_API_KEY=${env.WEATHER_API_KEY} > .env"
                         
                         def commands = [
@@ -86,7 +85,6 @@ pipeline {
                             "docker-compose up -d"
                         ]
 
-                        // Create the JSON manually by joining commands with escaped quotes
                         def jsonCommands = commands.collect { cmd -> 
                             return "\"${cmd.replace('"', '\\"')}\""
                         }.join(", ")
