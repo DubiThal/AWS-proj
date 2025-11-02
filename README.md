@@ -52,3 +52,6 @@ The Jenkins pipeline performs the following:
 - Docker containers run as non-root users where applicable
 - AWS, GitHub, and DockerHub credentials are securely stored and managed within Jenkins Credentials Store, and used in the CI/CD pipeline to authenticate and interact with respective services securely.
 - No secrets or sensitive information are hardcoded in the repository or Docker images.
+
+### AI Assistance
+This project was developed with occasional assistance from AI tools including ChatGPT, Claude, Gemini, and GitHub Copilot.
